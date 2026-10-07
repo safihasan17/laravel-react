@@ -32,7 +32,10 @@ class RoleController extends Controller
         // dd($roles);
 
          $roles = DB::table('roles')->orderBy('name', 'asc')->get();
-        return view('admin.pages.role.index', compact('roles'));
+        // return view('admin.pages.role.index', compact('roles'));
+        return response()->json([
+            'role' => $roles
+        ]);
     }
 
     /**
