@@ -1,26 +1,24 @@
 @extends('admin.layouts.master')
 
-@section('title', 'product - create')
-
-
+@section('title', 'Products - Create')
 
 @section('content')
-
-    <x-admin.phead title="product create" subtitle="create users  ">
-
-        <a href="{{ route('products.index') }}" class="btn-custom btn-custom-secondary" type="button"> <i class="bi bi-plus"></i>
-            back to product</a>
-
+    <x-admin.phead title="Products - Create" subtitle="Create a new item.">
+        <a href="{{ route('products.index') }}" class="btn-custom btn-custom-outline-secondary" type="button">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
     </x-admin.phead>
 
     @if (session('error'))
-       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-       </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
-    <form action="{{ route('products.store') }}" method="POST" enctype='multipart/form-data' >
+    <div class="card border-light shadow-sm p-4 h-100">
+
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             {{-- @if ($errors->any())
@@ -37,8 +35,7 @@
             <div class="row g-3">
                 <div class="col-lg-4 col-sm-6 col-12">
                     <label for="basicText" class="form-label-custom">Name</label>
-                    <input type="text" name="name" class="form-control-custom" id="basicText"
-                        placeholder="Enter username" value="{{ old('name') }}">
+                    <input type="text" name="name" class="form-control-custom">
                     <x-admin.error-msg name="name" />
                 </div>
                 <div class="col-lg-4 col-sm-6 col-12">
@@ -79,12 +76,12 @@
                 </div>
                 <div class="col-lg-4 col-sm-6 col-12">
                     <label class="form-label-custom">Image</label>
-                    <input type="file" class="form-control-custom" name="image">
-                    <x-admin.error-msg name="image"></x-admin.error-msg>
+                    <input type="file" name="image"  class="form-control-custom">
+                    <x-admin.error-msg name="image" />
                 </div>
                 <div class="col-lg-4 col-sm-6 col-12">
                     <div class="form-switch-custom">
-                        <input class="form-switch-input-custom" type="checkbox" id="switchOne" checked="" name="active">
+                        <input class="form-switch-input-custom" type="checkbox" name="active" id="switchOne" checked value="1">
                         <label class="form-switch-label" for="switchOne">Active</label>
                     </div>
                 </div>
@@ -94,4 +91,6 @@
                 <button type="submit" class="btn-custom btn-custom-secondary">Save</button>
             </div>
         </form>
+
+    </div>
 @endsection

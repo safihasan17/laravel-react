@@ -1,6 +1,6 @@
 @extends('site.layouts.master')
 
-@section('title', 'Product Details')
+@section('title', 'Cart')
 
 @section('content')
     <main id="main">
@@ -30,15 +30,10 @@
 
         <section class="section">
             <div class="container">
-
-                @if (session('success'))
-                @endif
                 <div class="cart-layout">
 
                     <div>
-                        <div class="cart-list">
-
-                        </div>
+                        <div class="cart-list"></div>
 
                         <div style="margin-top: var(--s5); display: flex; gap: var(--s3); flex-wrap: wrap">
                             <a href="shop.html" class="btn btn--ghost">← Continue shopping</a>
@@ -81,7 +76,8 @@
                                     <div style="font-family:var(--ff-display); font-weight:700; font-size:var(--text-sm)">
                                         2-year warranty
                                     </div>
-                                    <div style="font-family:var(--ff-mono); font-size:11px; color:var(--fg-mute)">On every
+                                    <div style="font-family:var(--ff-mono); font-size:11px; color:var(--fg-mute)">On
+                                        every
                                         Sprylo order
                                     </div>
                                 </div>
@@ -92,29 +88,21 @@
                     <aside class="cart-summary">
                         <h3>Order summary</h3>
 
-                        {{-- <div class="promo-input">
-                            <input type="text" placeholder="Promo code">
-                            <button>Apply</button>
-                        </div> --}}
-
-                        <div class="cart-line"><span>Subtotal </span><span
+                        <div class="cart-line"><span>Subtotal</span><span
                                 style="font-family:var(--ff-display); font-weight:600; color:var(--ink)"
                                 id="subtotal">$0.00</span>
                         </div>
-                        <div class="cart-line"><span>Shipping</span><span style="color: var(--emerald); font-weight: 600"
-                                id="shipingCost">$0.00</span></div>
+                        <div class="cart-line"><span>Shipping</span><span style="font-weight: 600"
+                                id="shippingCost">$0.00</span></div>
                         <div class="cart-line"><span>Estimated tax</span><span
                                 style="font-family:var(--ff-display); font-weight:600; color:var(--ink)"
                                 id="tax">$0.00</span>
                         </div>
-                        {{-- <div class="cart-line"><span>Promo · WELCOME20</span><span
-                                style="color: var(--rose); font-family:var(--ff-display); font-weight:600">−$56.00</span>
-                        </div> --}}
 
                         <div class="cart-line is-total"><span>Total</span><span id="total">$0.00</span></div>
 
-
-                        <a href="javascript:;" class="btn-proceed btn btn--indigo btn--block">Proceed to checkout →</a>
+                        <a href="javascript:void(0);" class="btn-proceed btn btn--indigo btn--block">Proceed to checkout
+                            →</a>
 
                         <form action="{{ route('orders.store') }}" method="POST" class="checkout-form">
                             @csrf
@@ -142,7 +130,7 @@
                                 <textarea name="shipping_address" id="c-msg" required="" placeholder="12 Mothijheel, Dhaka-100"></textarea>
                             </div>
                             <input type="hidden" name="items" value="">
-                            <button href="#" type="submit" class="btn btn--indigo btn--block">Order Now →</button>
+                            <button type="submit" class="btn btn--indigo btn--block">Order Now →</button>
                         </form>
 
                         <div
@@ -162,7 +150,8 @@
 
                         <p
                             style="margin-top: var(--s5); font-size: 11px; font-family: var(--ff-mono); color: var(--fg-mute); text-align: center; line-height: 1.6">
-                            Encrypted checkout · SSL secured. Your payment information is never stored on our servers.</p>
+                            Encrypted checkout · SSL secured. Your payment information is never stored on our servers.
+                        </p>
                     </aside>
 
                 </div>
@@ -181,90 +170,77 @@
 @endsection
 
 @section('script')
-@if(session('success'))
+    @if (session('success'))
+        <script>
+            cart.emptyCart();
+        </script>
+    @endif
     <script>
-        cart.emptyCart();
-    </script>
-@endif
-    <script>
-        //cart
+        // Cart
+        // =================
         // console.log(cart.getCart());
-
-        var cartlist = document.querySelector('.cart-list');
+        var cartList = document.querySelector('.cart-list');
 
         function printCart() {
             var list = cart.getCart();
             document.querySelector('.checkout-form input[name="items"]').value = JSON.stringify(list);
-            var html = "";
+            var html = '';
             var subtotal = 0;
             list.forEach(item => {
-                //   let img =  item.img ? item.img : 'https://placehold.co/600x400'
+                // let img = item.img ? item.img : 'https://placehold.net/product-400x400.png';
                 let img = item.img ? "{{ asset(':img') }}".replace(':img', item.img) :
-                    'https://placehold.co/400x400';
+                    'https://placehold.net/product-400x400.png';
                 html += `
-                                <article class="cart-row">
-                                    <div class="pic"><img
-                                            src="${img}"
-                                            alt=""></div>
-                                    <div class="info">
-                                        <div class="name">${item.name}</div>
-                                        <div class="varient">$${item.price}</div>
-                                       
-                                    </div>
-                                    <div class="qty">
-                                        <button onclick="decreaseQty(${item.id})" aria-label="Decrease">−</button>
-                                        <input type="text" value="${item.quantity}" inputmode="numeric" aria-label="Quantity">
-                                        <button onclick="increaseQty(${item.id})" aria-label="Increase">+</button>
-                                    </div>
-                                    <span class="subtotal">$${item.price * item.quantity}</span>
-                                    <button class="remove" aria-label="Remove" onclick="removeFromCart(${item.id})">✕</button>
-                                </article>
-    
-               `;
-
+            <article class="cart-row">
+                <div class="pic"><img
+                        src="${img}"
+                        alt="" /></div>
+                <div class="info">
+                    <div class="name">${item.name}</div>
+                    <div class="variant">$${item.price}</div>
+                </div>
+                <div class="qty">
+                    <button onclick="decreaseQty(${item.id})" aria-label="Decrease">−</button>
+                    <input type="text" value="${item.quantity}" inputmode="numeric" aria-label="Quantity" />
+                    <button onclick="increaseQty(${item.id})" aria-label="Increase">+</button>
+                </div>
+                <span class="subtotal">$${(item.price * item.quantity).toFixed(2)}</span>
+                <button class="remove" aria-label="Remove" onclick="removeFromCart(${item.id})">✕</button>
+            </article>
+            `;
                 subtotal += parseFloat(item.price * item.quantity);
-
             });
-
-            cartlist.innerHTML = html;
+            cartList.innerHTML = html;
             document.querySelector('#subtotal').innerText = `$${subtotal.toFixed(2)}`;
-            document.querySelector('#shipingCost').innerText = "$" + (subtotal ? 30 : 0).toFixed(2);
-            document.querySelector('#tax').innerText = `$${(subtotal*.05).toFixed(2)}`;
-            document.querySelector('#total').innerText = `$${(subtotal +(subtotal ? 30 :0) + (subtotal*.05)).toFixed(2)}`;
-
+            document.querySelector('#shippingCost').innerText = "$" + (subtotal ? 30 : 0).toFixed(2);
+            document.querySelector('#tax').innerText = `$${(subtotal * .05).toFixed(2)}`;
+            document.querySelector('#total').innerText =
+                `$${(subtotal + (subtotal ? 30 : 0) + (subtotal * .05)).toFixed(2)}`;
         }
-
         printCart();
 
         function removeFromCart(id) {
             cart.removeItem(id);
             printCart();
-            printItemNumber();
-
-
+            printItemsNumber();
         }
 
         function increaseQty(id) {
             cart.increaseQuantity(id);
             printCart();
-
         }
 
         function decreaseQty(id) {
             cart.decreaseQuantity(id);
             printCart();
-            printItemNumber();
+            printItemsNumber();
         }
 
-
-
-        //order-form
-        //==============
-
+        // Order Form
+        // =================
         document.querySelector('.btn-proceed').addEventListener('click', function(e) {
             this.style.display = 'none';
             document.querySelector('.checkout-form').style.display = 'block';
         })
     </script>
-
 @endsection

@@ -2,23 +2,17 @@
 
 @section('title', 'Roles')
 
-
-
 @section('content')
-   
-    <x-admin.phead title="roles" subtitle="Mange table from this page">
-        @if(auth()->user()->role_id !=4)
-        <a href="{{ route('roles.create') }}" class="btn-custom btn-custom-secondary" type="button"> <i class="bi bi-plus"></i>
-            Add new</a>
-        @endif
+    <x-admin.phead title="Roles" subtitle="Manage items from this page.">
+        <a href="{{ route('roles.create') }}" class="btn-custom btn-custom-secondary" type="button">
+            <i class="bi bi-plus"></i> Add New
+        </a>
     </x-admin.phead>
-
-
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
@@ -28,7 +22,14 @@
             <!-- Search bar -->
             <div class="table-search-box">
                 <i class="bi bi-search table-search-icon"></i>
-                <input type="text" class="table-search-input" placeholder="Search orders or products...">
+                <input list="cities" type="search" class="table-search-input" placeholder="Search roles...">
+                {{-- <datalist id="cities">
+                    <option value="Mursalin">
+                    <option value="Khairul">
+                    <option value="Fahim">
+                    <option value="Rion">
+                    <option value="Arif">
+                </datalist> --}}
             </div>
             <!-- Action buttons / Filter options -->
             <div class="table-filter-group">
@@ -55,80 +56,57 @@
             <table class="table-custom">
                 <thead>
                     <tr>
-                        <th> ID</th>
+                        <th>ID</th>
                         <th>Role</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                   
-                    
+                <tbody id="tbody">
                     @foreach ($roles as $item)
                         <tr>
-                            <td class="table-order-id">{{ $item->id }}</td>
-                            
-                            <td class="table-product-name">{{ $item->name }}</td>
-
-
+                            <td class="table-order-id">
+                                {{ $roles->firstItem() + $loop->index }}
+                            </td>
+                            <td>{{ $item->name }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
-                                  
-
-                    
                                     <a href="{{ route('roles.edit', ['role' => $item->id]) }}" class="table-btn-action"
                                         title="Edit row"><i class="bi bi-pencil"></i></a>
-                                    
-                                   
-                                     {{-- @if (auth()->role()->role_id == 1 || auth()->role()->role_id == 3 ) --}}
-                                    <button type="button" class="table-btn-action delete"
-                                    data-id="{{$item->id }}"
-                                    data-name="{{$item->name }}"
-                                    title="Delete row"
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#modalDelete">
-                                    <i class="bi bi-trash"></i>
-                                    </button>
-
-                                    {{-- @endif --}}
-
+                                    @if (auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
+                                        <button type="button" class="table-btn-action delete" data-id="{{ $item->id }}"
+                                            data-name="{{ $item->name }}" data-bs-toggle="modal"
+                                            data-bs-target="#modalDelete" title="Delete row">
+                                            <i class="bi bi-trash"></i></button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
                     @endforeach
-                    
-                   
-
                 </tbody>
             </table>
         </div>
 
         <!-- Footer Controls / Pagination -->
         <div class="table-footer-control">
-            {{-- {{ $users->Links() }} --}}
+            {{ $roles->links() }}
         </div>
     </div>
 
-    {{-- modal --}}
-
     <x-admin.modal id="modalDelete" title="Delete User">
         <div class="text-center">
-            <i class="bi bi-trash fs-1 text-danger"></i> <br>
-            <p> Are you sure you ant to Delete this User</p>
+            <i class="bi bi-trash fs-1 text-danger"></i>
+            <p class="mt-2">Are you sure you want to delete this user?</p>
             <span class="name fw-bold badge border border-danger text-danger py-2 px-3"></span>
-
             <hr>
-
-            <form  method="POST">
+            <form method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="button" class="btn btn-outline-secondary" title="Delete row" data-bs-dismiss="modal">cancel</button>
-                <button type="submit" class="btn  btn-danger" title="Delete row" data-bs-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-outline-secondary me-1" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
             </form>
-
         </div>
     </x-admin.modal>
 @endsection
-
 
 @section('style')
     <style>
@@ -144,21 +122,68 @@
     </style>
 @endsection
 
-
 @section('script')
-
-<script>
-document.querySelectorAll('.delete').forEach(button=>{
-    button.addEventListener('click', function(){
-        let id = this.dataset.id;
-        let name = this.dataset.name;
-        // alert(id);
-
-        document.querySelector('#modalDelete .name').innerText = name;
-        document.querySelector('#modalDelete form').action = `{{ route('roles.destroy' , ['role'=>':id']) }}` .replace(':id', id);
-        
-    })
-})
-</script>
-
+    <script>
+        function loadDelete() {
+            document.querySelectorAll('.delete').forEach(button => {
+                button.addEventListener('click', function() {
+                    let id = this.dataset.id;
+                    let name = this.dataset.name;
+                    // alert(id);
+                    document.querySelector('#modalDelete .name').innerText = name;
+                    // document.querySelector('#modalDelete form').action = `/roles/${id}`;
+                    document.querySelector('#modalDelete form').action =
+                        `{{ route('roles.destroy', ['role' => '_id']) }}`.replace('_id', id);
+                })
+            })
+        }
+        loadDelete();
+    </script>
+    <script>
+        let searchInput = $('.table-search-input');
+        searchInput.on('input', function() {
+            $.ajax({
+                url: '{{ route('roles.search') }}',
+                method: 'GET',
+                data: {
+                    search: $(this).val(),
+                    // _token: '{{ csrf_token() }}'
+                },
+                success: function(res) {
+                    // console.log(res.data);
+                    let rows = res.data;
+                    let html = '';
+                    rows.forEach((item, i) => {
+                        const editUrl = "{{ route('roles.edit', ['role' => ':id']) }}";
+                        let url = editUrl.replace(':id', item.id);
+                        html += `
+                        <tr>
+                            <td class="table-order-id">
+                                ${i + 1}
+                            </td>
+                            <td>${item.name}</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="${url}" class="table-btn-action"
+                                        title="Edit row"><i class="bi bi-pencil"></i></a>
+                                    @if (auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
+                                        <button type="button" class="table-btn-action delete" data-id="${item.id}"
+                                            data-name="${item.name}" data-bs-toggle="modal"
+                                            data-bs-target="#modalDelete" title="Delete row">
+                                            <i class="bi bi-trash"></i></button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                    $('#tbody').html(html);
+                    loadDelete();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            })
+        });
+    </script>
 @endsection

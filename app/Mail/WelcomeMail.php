@@ -20,11 +20,10 @@ class WelcomeMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($_name , $_email)
+    public function __construct($_name, $_email)
     {
         $this->name = $_name;
         $this->email = $_email;
-        
     }
 
     /**
@@ -33,7 +32,7 @@ class WelcomeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to Our App',
+            subject: "Welcome {$this->name} to our app",
         );
     }
 

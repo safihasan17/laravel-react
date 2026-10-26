@@ -17,7 +17,7 @@ class CartHelper {
         return this.cart.findIndex(item => item.id == productId);
     }
 
-    addItem(id, name, price, img= null, quantity = 1, discount = 0) {
+    addItem(id, name, price, img = '', quantity = 1, discount = 0) {
         id = parseInt(id);
         price = parseFloat(price);
         quantity = parseInt(quantity);
@@ -76,7 +76,7 @@ class CartHelper {
         }, 0).toFixed(2);
     }
 
-    countItems(){
+    countItems() {
         return this.cart.length;
     }
 }

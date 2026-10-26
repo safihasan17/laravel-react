@@ -1,12 +1,11 @@
 @extends('site.layouts.master')
 
-@section('title', 'Product Details')
+@section('title', $product->name." | ".$product->category->name)
 
 @section('content')
     <main id="main">
         <div class="container">
-            <div class="crumbs" style="padding-top: var(--s5)"><a href="index.html">Home</a> <span class="sep">›</span> <a
-                    href="shop.html">Shop</a> <span class="sep">›</span> <span>Speakers</span></div>
+            <div class="crumbs" style="padding-top: var(--s5)"><a href="/">Home</a> <span class="sep">›</span> <span>{{ $product->category->name }}</span></div>
 
             <section class="product-detail">
 
@@ -14,28 +13,23 @@
                     <div class="gallery-thumbs">
                         <button class="is-active">
                             @if ($product->image)
-                                <img src="{{ asset("$product->image") }}" alt="{{ $product->image }}" class="rounded-3"
-                                    width="60" height="60">
+                                <img src="{{ asset("$product->image") }}" alt="{{ $product->name }} Image">
                             @else
-                                <img src="https://placehold.net/product-400x400.png" alt="" class="rounded-3"
-                                    width="60" height="60">
+                                <img src="https://placehold.net/product-400x400.png" alt="Placeholder">
                             @endif
                         </button>
-
                     </div>
                     <figure class="gallery-main">
-                         @if ($product->image)
-                                <img src="{{ asset("$product->image") }}" alt="{{ $product->image }}" class="rounded-3"
-                                    width="60" height="60">
-                            @else
-                                <img src="https://placehold.net/product-400x400.png" alt="" class="rounded-3"
-                                    width="60" height="60">
-                            @endif
+                        @if ($product->image)
+                            <img src="{{ asset("$product->image") }}" alt="{{ $product->name }} Image">
+                        @else
+                            <img src="https://placehold.net/product-400x400.png" alt="Placeholder">
+                        @endif
                     </figure>
                 </div>
 
                 <div class="pdp-info">
-                    <span class="pdp-cat">⚡ Audio · Featured</span>
+                    <span class="pdp-cat">⚡ {{ $product->category->name }}</span>
                     <h1>{{ $product->name }}</h1>
                     <div class="rating-row">
                         <span style="color: var(--amber); font-size: 16px">★★★★★</span>
@@ -48,8 +42,7 @@
                     <p class="desc">{{ $product->description }}</p>
 
                     <div class="price-row">
-                        <span class="now">${{$product->price}}</span>
-                       
+                        <span class="now">${{ $product->price }}</span>
                     </div>
 
                     <div class="option-block">
@@ -57,14 +50,13 @@
                         <h5>{{ $product->brand->name }}</h5>
                     </div>
 
-
                     <div class="pdp-cta">
                         <div class="qty">
                             <button type="button" data-act="-" aria-label="Decrease">−</button>
                             <input type="text" value="1" inputmode="numeric" aria-label="Quantity" />
                             <button type="button" data-act="+" aria-label="Increase">+</button>
                         </div>
-                        <a href="javascript:void(0)" onclick="addToCart({{ $product->id}} , '{{ $product->name }}' , {{ $product->price }} , '{{ $product->image ?? '' }}'  )" class="btn btn--indigo" style="flex:1; min-width:160px">Add to cart →</a>
+                        <a href="javascript:void(0)" onclick="addToCart({{$product->id}},'{{$product->name}}',{{$product->price}},'{{$product->image ?? ''}}')" class="btn btn--indigo" style="flex:1; min-width:160px">Add to cart →</a>
                         <a href="cart.html" class="btn btn--ink">Buy now</a>
                         <button class="icon-btn" aria-label="Add to wishlist" style="background: var(--bg)">♡</button>
                     </div>

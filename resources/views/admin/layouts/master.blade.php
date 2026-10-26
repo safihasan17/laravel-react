@@ -2,66 +2,50 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title')</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@yield('title')</title>
 
-    <!-- SEO Optimization -->
-    <meta name="description" content="Spark Admin - Premium Bootstrap 5 Admin Dashboard Template">
-    <meta name="author" content="Spark Admin Team">
+  <!-- SEO Optimization -->
+  <meta name="description" content="Spark Admin - Premium Bootstrap 5 Admin Dashboard Template">
+  <meta name="author" content="Spark Admin Team">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.ico') }}">
 
-    <!-- Local Third-Party Libraries (100% Offline Compatible) -->
-    <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap-icons/bootstrap-icons.css') }}">
-
-    @yield('style')
-  
-
-    <!-- Main Design System & Custom Stylesheet -->
-    <link rel="stylesheet" href="{{asset('assets/css/main.css')}}">
+  <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+  <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap-icons/bootstrap-icons.css') }}">  
+  <!-- Main Design System & Custom Stylesheet -->
+  <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+  @yield('style')
 </head>
 
 <body>
 
-    <!-- ==========================================
-         START: Sidebar Component
-         Highly polished, dark-green sticky navigation
-         ========================================== -->
-    @include('admin.layouts.sidebar')
-    <!-- ==========================================
-         END: Sidebar Component
-         ========================================== -->
+  @include('admin.layouts.sidebar')
 
-
-    <!-- ==========================================
+  <!-- ==========================================
          START: Main Content Area
          ========================================== -->
-    <div class="main-wrapper">
+  <div class="main-wrapper">
 
-        <!-- START: Top Navbar Component -->
-        @include('admin.layouts.header')
-        <!-- END: Top Navbar Component -->
+    @include('admin.layouts.header')
 
-       @yield('content')
+    @yield('content')
 
-        <!-- START: Footer Component -->
-        @include('admin.layouts.footer')
-        <!-- END: Footer Component -->
+    @include('admin.layouts.footer')
 
-    </div>
-    <!-- ==========================================
+  </div>
+  <!-- ==========================================
          END: Main Content Area
          ========================================== -->
 
-    <!-- Local Third-Party Libraries Script dependencies -->
+  <!-- Local Third-Party Libraries Script dependencies -->
+  <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+  <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    <script src="{{asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-    @yield('script')
-    
+  @yield('script')
 </body>
 
 </html>

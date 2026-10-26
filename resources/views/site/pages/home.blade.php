@@ -112,11 +112,11 @@
             </div>
         </section>
 
-        <!-- TRENDING PRODUCTS -->
+        <!-- LATEST PRODUCTS -->
         <section class="section" style="padding-top: var(--s5)">
             <div class="container">
                 <div class="section-head">
-                    <h2>Trending Products</h2>
+                    <h2>Latest Products</h2>
                     <a href="shop.html" class="view-all">View all
                         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
                             <path d="M1 5h12m0 0L9 1m4 4L9 9" stroke="currentColor" stroke-width="1.8"
@@ -151,239 +151,88 @@
                         Accessories
                     </button>
 
-
+                    <!-- Speaker Tab -->
+                    <button class="tab" type="button" role="tab" aria-selected="false"
+                        data-target="#speaker-products">
+                        Speaker
+                    </button>
 
                 </div>
 
 
                 <!-- =====================================================
-                 MOBILE PRODUCTS
-            ===================================================== -->
+                     MOBILE PRODUCTS
+                ===================================================== -->
 
                 <div class="products tab-pane" id="mobile-products">
 
-                    @forelse ($mobile as $item)
-                       <x-site.product-card :item="$item"/>
-
+                    @forelse ($mobiles as $item)
+                        <x-site.product-card :item="$item" />
                     @empty
-                        <div>Np product Found</div>
+                        <div>No products found</div>
                     @endforelse
+
                 </div>
 
 
                 <!-- =====================================================
-                 WATCH PRODUCTS
-            ===================================================== -->
+                     WATCH PRODUCTS
+                ===================================================== -->
 
                 <div class="products tab-pane" id="watch-products">
-                   @forelse ($watch as $item)
-                       <x-site.product-card :item="$item"/>
 
+                    @forelse ($watches as $item)
+                        <x-site.product-card :item="$item" />
                     @empty
-                        <div>Np product Found</div>
+                        <div>No products found</div>
                     @endforelse
-                    
+
                 </div>
 
 
                 <!-- =====================================================
-                 CAMERA PRODUCTS
-            ===================================================== -->
+                     CAMERA PRODUCTS
+                ===================================================== -->
 
                 <div class="products tab-pane" id="camera-products">
 
-                    @forelse ($camera as $item)
-                       <x-site.product-card :item="$item"/>
-
+                    @forelse ($cameras as $item)
+                        <x-site.product-card :item="$item" />
                     @empty
-                        <div>Np product Found</div>
+                        <div>No products found</div>
                     @endforelse
 
                 </div>
 
 
                 <!-- =====================================================
-                 ACCESSORIES PRODUCTS
-            ===================================================== -->
+                     ACCESSORIES PRODUCTS
+                ===================================================== -->
 
                 <div class="products tab-pane" id="accessories-products">
 
-                     @forelse ($assessories as $item)
-                       <x-site.product-card :item="$item"/>
-
+                    @forelse ($accessories as $item)
+                        <x-site.product-card :item="$item" />
                     @empty
-                        <div>Np product Found</div>
+                        <div>No products found</div>
                     @endforelse
 
                 </div>
 
 
                 <!-- =====================================================
-                 SPEAKER PRODUCTS
-            ===================================================== -->
+                     SPEAKER PRODUCTS
+                ===================================================== -->
 
-                {{-- <div class="products tab-pane" id="speaker-products">
+                <div class="products tab-pane" id="speaker-products">
 
-                    <article class="product-card">
+                    @forelse ($speakers as $item)
+                        <x-site.product-card :item="$item" />
+                    @empty
+                        <div>No products found</div>
+                    @endforelse
 
-                        <div class="img-wrap">
-
-                            <span class="badge">
-                                New
-                            </span>
-
-                            <button class="wishlist" aria-label="Wishlist">
-                                ♡
-                            </button>
-
-                            <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80&auto=format&fit=crop"
-                                alt="JBL Charge 5">
-
-                        </div>
-
-                        <div class="stock">
-                            <span class="dot"></span>
-                            In stock · 31 items
-                        </div>
-
-                        <a href="product.html" class="name">
-                            JBL Charge 5
-                        </a>
-
-                        <div class="price">
-                            <span class="now">$179</span>
-                        </div>
-
-                        <div class="stars">
-                            ★★★★★
-                            <span class="count">(231)</span>
-                        </div>
-
-                        <a href="cart.html" class="btn">
-                            Order now →
-                        </a>
-
-                    </article>
-
-
-                    <article class="product-card">
-
-                        <div class="img-wrap">
-
-                            <button class="wishlist" aria-label="Wishlist">
-                                ♡
-                            </button>
-
-                            <img src="https://images.unsplash.com/photo-1589003077984-894e133dabab?w=500&q=80&auto=format&fit=crop"
-                                alt="Sony SRS-XB23">
-
-                        </div>
-
-                        <div class="stock">
-                            <span class="dot"></span>
-                            In stock · 19 items
-                        </div>
-
-                        <a href="product.html" class="name">
-                            Sony SRS-XB23
-                        </a>
-
-                        <div class="price">
-                            <span class="now">$129</span>
-                        </div>
-
-                        <div class="stars">
-                            ★★★★☆
-                            <span class="count">(87)</span>
-                        </div>
-
-                        <a href="cart.html" class="btn">
-                            Order now →
-                        </a>
-
-                    </article>
-
-
-                    <article class="product-card">
-
-                        <div class="img-wrap">
-
-                            <span class="badge">
-                                New
-                            </span>
-
-                            <button class="wishlist" aria-label="Wishlist">
-                                ♡
-                            </button>
-
-                            <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80&auto=format&fit=crop"
-                                alt="Bose SoundLink Flex">
-
-                        </div>
-
-                        <div class="stock">
-                            <span class="dot"></span>
-                            In stock · 16 items
-                        </div>
-
-                        <a href="product.html" class="name">
-                            Bose SoundLink Flex
-                        </a>
-
-                        <div class="price">
-                            <span class="now">$149</span>
-                        </div>
-
-                        <div class="stars">
-                            ★★★★★
-                            <span class="count">(154)</span>
-                        </div>
-
-                        <a href="cart.html" class="btn">
-                            Order now →
-                        </a>
-
-                    </article>
-
-
-                    <article class="product-card">
-
-                        <div class="img-wrap">
-
-                            <button class="wishlist" aria-label="Wishlist">
-                                ♡
-                            </button>
-
-                            <img src="https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=500&q=80&auto=format&fit=crop"
-                                alt="Marshall Emberton II">
-
-                        </div>
-
-                        <div class="stock">
-                            <span class="dot"></span>
-                            In stock · 13 items
-                        </div>
-
-                        <a href="product.html" class="name">
-                            Marshall Emberton II
-                        </a>
-
-                        <div class="price">
-                            <span class="now">$169</span>
-                        </div>
-
-                        <div class="stars">
-                            ★★★★★
-                            <span class="count">(109)</span>
-                        </div>
-
-                        <a href="cart.html" class="btn">
-                            Order now →
-                        </a>
-
-                    </article>
-
-                </div> --}}
+                </div>
 
             </div>
         </section>

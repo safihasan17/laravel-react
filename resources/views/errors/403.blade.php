@@ -1,4 +1,7 @@
 @extends('admin.layouts.single-master')
+
+@section('title', 'Access Denied')
+
 @section('content')
     <div class="login-card text-center">
 
@@ -17,13 +20,13 @@
 
         <h2 class="error-subtitle">Access Denied</h2>
         <p class="error-desc">
-            sorry, you a don't have permission to access this page
+            Sorry, you don't have permission to access this page.
         </p>
 
         <div class="error-actions-group">
-            @if (auth()->user()->role_id == 4)
-                <a href="{{ route('users.show' ,['user'=>auth()->user()->id]) }}" class="btn-custom btn-custom-primary">
-                    <i class="bi bi-house"></i> Back to Profile
+            @if (auth()->user()->role_id == 5)
+                <a href="{{ route('users.show',['user' => auth()->user()->id]) }}" class="btn-custom btn-custom-primary">
+                    <i class="bi bi-person"></i> Back to Profile
                 </a>
             @else
                 <a href="{{ route('dashboard') }}" class="btn-custom btn-custom-primary">

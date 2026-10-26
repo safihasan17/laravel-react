@@ -42,18 +42,17 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id'=>4,
+            'role_id' => 5,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
         Mail::to($user->email)
-               ->send(new WelcomeMail($user->name, $user->email));
-
+            ->send(new WelcomeMail($user->name, $user->email));
         // Auth::login($user);
 
-        // return redirect(route('dashboard', absolute: false));
-        return redirect()->route('login')->with('success', 'Registration successfull');
+        // return redirect('/login');
+        return redirect()->route('login')->with('success', 'Account created successfully!');
     }
 }

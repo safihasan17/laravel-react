@@ -1,4 +1,5 @@
- <header class="site-header">
+ <!-- Header -->
+  <header class="site-header">
     <div class="container">
       <a href="index.html" class="brand">
         <span class="brand-mark">S</span>

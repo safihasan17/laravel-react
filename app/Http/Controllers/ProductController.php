@@ -7,45 +7,46 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Services\UploadImgService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index (Request $request)
+    public function index(Request $request)
     {
+        // $products = Product::from('products p')
+        //                     ->join('categories c', 'c.id', '=', 'p.category_id')
+        //                     ->join('brands c', 'c.id', '=', 'p.brand_id')
+        //                     ->select('p.*', 'c.name as category', 'b.name as brand')
+        //                     ->get();
 
-        // if($request->search ){
-        //     dd($request->search . " ". $request->category. " ". $request->brand);
-           
+        // if($request->search && $request->category_id && $request->brand_id) {
+        //     dd($request->search . " " . $request->category_id . " " . $request->brand_id);
         // }
 
         $query = Product::query();
-        if($request->search){
-            $query->where('name', 'like', "%{$request->search}%");
+        if($request->search) {
+            // $query->where('name', 'like', "%{$request->search}%");
+            $query->where('name', 'like', "%".$request->search."%");
         }
-
-        if($request->category){
-            $query->where('category_id', $request->category);
+        if($request->category_id) {
+            $query->where('category_id', $request->category_id);
         }
-        if($request->brand){
-            $query->where('brand_id', $request->brand);
+        if($request->brand_id) {
+            $query->where('brand_id', $request->brand_id);
         }
-
         $products = $query->with('category', 'brand')
-             ->orderBy('id', 'desc')
-             ->paginate();
+                    ->orderby('id', 'desc')
+                    ->paginate();
 
 
-
-
-        $categories = Category::orderBY('name','asc')->get();
-        $brands = Brand::orderBY('name','asc')->get();
-        // $products = Product::with('category','brand' )->orderby('id', 'desc')->paginate(10);
-        
-        // dd($products->first()->category);
+        $categories = Category::orderBy('name', 'asc')->get();
+        $brands = Brand::orderBy('name', 'asc')->get();
+        // $products = Product::with('category', 'brand')
+        //     ->orderby('id', 'desc')
+        //     ->paginate();
+        // dd($products->first()->category->name);
         return view('admin.pages.product.index', compact('products', 'categories', 'brands'));
     }
 
@@ -54,9 +55,12 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = Category::orderby('name', 'asc')->get();
-        $brands= Brand::orderby('name', 'asc')->get();
-        return view('admin.pages.product.create', compact('categories', 'brands' ));
+        $categories = Category::orderBy('name', 'asc')->get();
+        $brands = Brand::orderBy('name', 'asc')->get();
+        return view('admin.pages.product.create', [
+            'categories'    => $categories,
+            'brands'        => $brands
+        ]);
     }
 
     /**
@@ -65,56 +69,60 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            // 'iamge' =>'required|array',
-            // 'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        $request->validate(
+            [
+                // For multiple image
+                //    'image'  => 'required|array', 
+                //    'image*' => 'images|mimes:jpeg,png,jpg,gif,svg|max:2048', 
 
-            'name'=>'required|min:3',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:500',
+                'name' => 'required|min:3',
+                // For single image
+                'image' => 'image|mimes:jpeg,png,jpg|max:500',
+            ],
+            [
+                'name.min' => 'Please enter at least 3 characters',
+                'image.max' => 'Sorry! Image size is too large. Maximum size is 500kb.',
+            ] 
+        );
+        // dd($request->active);
+        if($request->hasFile('image')) {
+            // dd("Image Found");
+            // $imgName = time() . '.' . $request->image->extension();
+            // $imgName = time() . '.' . $request->image->getClientOriginalExtension();
+            // // dd($request->image->getClientOriginalExtension());
+            // $request->image->move(public_path('uploads'), $imgName);
 
-        ] ,[
-             'name.min'=>'please enter at least 3 characters',
-             'image.max'=>'Image size is too learge . Maximum size is 500kb',
-            //  'image.mimes'=>'please upload valid file',
-        ]);
-
-        if($request->hasFile('image')){
-            // dd($request->image->extension());
-            // $imgName= time() . '.' . $request->image->extension();
-            // $request->image->move(public_path('uploads'), $imgName );
-
-            $imgName= UploadImgService::upload($request->image, 'uploads/products');
+            $imgName = UploadImgService::upload($request->image, 'uploads/products');
 
             Product::create([
-              'name'           => $request->name,
-              'price'          => $request->price,
-              'quantity'       => $request->qty,
-              'reorder_level'  => $request->reorder,
-              'description'    => $request->desc,
-              'category_id'    => $request->category_id,
-              'brand_id'       => $request->brand_id,
-              'active'         => $request->active ? 1: 0,
-              'image'          =>  $imgName,
+                'name'          => $request->name,
+                'price'         => $request->price,
+                'quantity'      => $request->qty,
+                'reorder_level' => $request->reorder,
+                'description'   => $request->desc,
+                'category_id'   => $request->category_id,
+                'brand_id'      => $request->brand_id,
+                'active'        => $request->active ? 1 : 0,
+                // 'image'         => "uploads/" . $imgName,
+                'image'         => $imgName,
             ]);
-            return redirect()->route('products.index')->with('success', 'product created successfully');
-
+            return redirect()->route('products.index')->with('success', 'Product created successfully.');
         }else{
-        //    dd('no Image');
-
-        Product::create([
-              'name'  => $request->name,
-              'price'  => $request->price,
-              'quantity'  => $request->qty,
-              'reorder_level'  => $request->reorder,
-              'description'  => $request->desc,
-              'category_id'  => $request->category_id,
-              'brand_id'  => $request->brand_id,
-              'active'  => $request->active ? 1: 0,
+            // dd("No Image");
+            // Product::create($request->all());
+            Product::create([
+                'name'          => $request->name,
+                'price'         => $request->price,
+                'quantity'      => $request->qty,
+                'reorder_level' => $request->reorder,
+                'description'   => $request->desc,
+                'category_id'   => $request->category_id,
+                'brand_id'      => $request->brand_id,
+                'active'        => $request->active ? 1 : 0,
             ]);
-            return redirect()->route('products.index')->with('success', 'product created successfully');
-
-
+            return redirect()->route('products.index')->with('success', 'Product created successfully.');
         }
+
     }
 
     /**
@@ -122,7 +130,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        
+        //
     }
 
     /**
@@ -147,11 +155,10 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         // dd($product);
-        if($product->image ){
+        if($product->image) {
             unlink(public_path($product->image));
         }
         Product::destroy($product->id);
-        return redirect()->route('products.index')->with('success', 'Product delated successfully');
-
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }

@@ -72,7 +72,8 @@
         <div class="col-md-8 order-md-1">
             <h4 class="mb-3">Billing address</h4>
             <form action="{{ url('/pay') }}" method="POST" class="needs-validation">
-                <input type="hidden" value="{{ csrf_token() }}" name="_token" />
+                @csrf
+                {{-- <input type="hidden" value="{{ csrf_token() }}" name="_token" /> --}}
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="firstName">Full name</label>

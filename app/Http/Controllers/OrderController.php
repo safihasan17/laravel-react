@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
 {
@@ -46,7 +45,7 @@ class OrderController extends Controller
             ]);
         }
 
-        return redirect()->route('cart')->with('success', 'your order has been placed. Thank you for shopting with us');
+        return redirect()->route('cart')->with('success', 'Your order has been placed. Thanks for shoping with us.');
     }
 
     /**

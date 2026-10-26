@@ -29,7 +29,7 @@
           <tr>
             <td style="padding:40px 35px;">
               <p style="margin:0 0 20px; font-size:16px;">
-                Hi <strong>{{$user->name}}</strong>,
+                Hi <strong>{{ $user->name }}</strong>,
               </p>
 
               <p style="margin:0 0 20px; font-size:16px; line-height:1.6;">
@@ -38,17 +38,16 @@
 
               <div style="background:#f8fafc; border-left:4px solid #2563eb; padding:15px 20px; margin:25px 0;">
                 <p style="margin:0 0 8px; font-size:14px; color:#666666;">
-                 Name: <b> {{$user->name}} </b>
+                  Name : <b>{{$user->name}}</b>
                 </p>
-                <p style="margin:0; font-size:16px; font-weight:bold;">
-                 Email: <b>  {{$user->email}} </b>
+                <p style="margin:0 0 8px; font-size:14px; color:#666666;">
+                  Email : <b>{{$user->email}}</b>
                 </p>
-
-                <p style="margin:0; font-size:16px; font-weight:bold;">
-                  Role: <b> {{$user->role}} </b>
+                <p style="margin:0 0 8px; font-size:14px; color:#666666;">
+                  Role : <b>{{$user->role}}</b>
                 </p>
-                <p style="margin:0; font-size:16px; font-weight:bold;">
-                  Updated Time: <b> {{$user->updated}} </b>
+                <p style="margin:0 0 8px; font-size:14px; color:#666666;">
+                  Updated on : <b>{{$user->updated}}</b>
                 </p>
               </div>
 
@@ -61,7 +60,8 @@
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="background:#2563eb; border-radius:6px;">
-                    <a href="account_url"
+                    <a href="{{ route('users.show',['user' => $user->id]) }}" target="_blank"
+                    {{-- <a href="http://lara-project.test/users/{{ $user->id }}" target="_blank" --}}
                        style="display:inline-block; padding:13px 24px; color:#ffffff;
                               text-decoration:none; font-size:15px; font-weight:bold;">
                       View My Profile
@@ -80,7 +80,7 @@
               </p>
 
               <p style="margin:0; font-size:12px; color:#999999;">
-                &copy; . All rights reserved.
+                &copy; year company_name. All rights reserved.
               </p>
             </td>
           </tr>

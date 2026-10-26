@@ -15,9 +15,7 @@ class PreventBrowserCache
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // return $next($request);
-
-         $response = $next($request);
+        $response = $next($request);
 
         $response->headers->set(
             'Cache-Control',

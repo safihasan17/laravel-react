@@ -1,24 +1,18 @@
 @extends('admin.layouts.master')
 
-@section('title', 'users')
-
-
+@section('title', 'Users')
 
 @section('content')
-   
-    <x-admin.phead title="users" subtitle="Mange table from this page">
-        @if(auth()->user()->role_id !=4)
-        <a href="{{ route('users.create') }}" class="btn-custom btn-custom-secondary" type="button"> <i class="bi bi-plus"></i>
-            Add new</a>
-        @endif
+    <x-admin.phead title="Users" subtitle="Manage items from this page.">
+        <a href="{{ route('users.create') }}" class="btn-custom btn-custom-secondary" type="button">
+            <i class="bi bi-plus"></i> Add New
+        </a>
     </x-admin.phead>
-
-
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
@@ -55,23 +49,18 @@
             <table class="table-custom">
                 <thead>
                     <tr>
-                        <th> ID</th>
+                        <th>ID</th>
                         <th>User</th>
                         <th>Role</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
-                    
                     @foreach ($users as $item)
                         <tr>
                             <td class="table-order-id">{{ $item->id }}</td>
                             <td>
                                 <div class="table-user-cell">
-                                    {{-- <img src="https://i.pravatar.cc/150?img={{ $item->id }}" alt="Eleanor Pena" class="table-user-avatar"
-                                   onerror="this.src='assets/images/avatar.png'"> --}}
-
                                     <span
                                         class="table-user-avatar bg-brand-lime d-flex align-items-center justify-content-center text-lime fw-bold fs-5">{{ Str::substr($item->name, 0, 1) }}</span>
                                     <div>
@@ -81,85 +70,61 @@
                                 </div>
                             </td>
                             <td class="table-product-name">{{ $item->role }}</td>
-
-
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
-                                    
                                     <a href="{{ route('users.show', ['user' => $item->id]) }}" class="table-btn-action"
                                         title="View details"><i class="bi bi-eye"></i></a>
-
-                                     
-                                    
                                     <a href="{{ route('users.edit', ['user' => $item->id]) }}" class="table-btn-action"
                                         title="Edit row"><i class="bi bi-pencil"></i></a>
-                                    
                                     {{-- <form action="{{ route('users.destroy', ['user' => $item->id]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="table-btn-action delete" title="Delete row"
-                                            data-bs-toggle="modal"  data-bs-target="#deleteModal{{ $item->id }}"><i
+                                        <button type="submit" class="table-btn-action delete" title="Delete row"><i
                                                 class="bi bi-trash"></i></button>
-
-
                                     </form> --}}
-                                     @if (auth()->user()->role_id == 1 || auth()->user()->role_id == 3 )
-                                    <button type="button" class="table-btn-action delete"
-                                    data-id="{{$item->id }}"
-                                    data-name="{{$item->name }}"
-                                    title="Delete row"
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#modalDelete">
-                                    <i class="bi bi-trash"></i>
-                                    </button>
-
+                                    @if(auth()->user()->role_id == 1 || auth()->user()->role_id == 2)
+                                    <button type="button" class="table-btn-action delete" 
+                                    data-id="{{ $item->id }}" 
+                                    data-name="{{ $item->name }}" 
+                                    data-bs-toggle="modal" data-bs-target="#modalDelete"
+                                     title="Delete row">
+                                     <i class="bi bi-trash"></i></button>
                                     @endif
-
                                 </div>
                             </td>
                         </tr>
                     @endforeach
-                    
-                   
-
                 </tbody>
             </table>
         </div>
 
         <!-- Footer Controls / Pagination -->
         <div class="table-footer-control">
-            {{ $users->Links() }}
+            {{ $users->links() }}
         </div>
     </div>
 
-    {{-- modal --}}
-
     <x-admin.modal id="modalDelete" title="Delete User">
         <div class="text-center">
-            <i class="bi bi-trash fs-1 text-danger"></i> <br>
-            <p> Are you sure you ant to Delete this User</p>
+            <i class="bi bi-trash fs-1 text-danger"></i>
+            <p class="mt-2">Are you sure you want to delete this user?</p>
             <span class="name fw-bold badge border border-danger text-danger py-2 px-3"></span>
-
             <hr>
-
-            <form  method="POST">
+            <form method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="button" class="btn btn-outline-secondary" title="Delete row" data-bs-dismiss="modal">cancel</button>
-                <button type="submit" class="btn  btn-danger" title="Delete row" data-bs-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-outline-secondary me-1" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
             </form>
-
         </div>
     </x-admin.modal>
 @endsection
-
 
 @section('style')
     <style>
         .table-footer-control nav {
             width: 100%;
         }
-
         .table-footer-control nav div:last-child {
             display: flex;
             align-items: center;
@@ -168,21 +133,17 @@
     </style>
 @endsection
 
-
 @section('script')
-
 <script>
-document.querySelectorAll('.delete').forEach(button=>{
-    button.addEventListener('click', function(){
-        let id = this.dataset.id;
-        let name = this.dataset.name;
-        // alert(id);
-
-        document.querySelector('#modalDelete .name').innerText = name;
-        document.querySelector('#modalDelete form').action = `{{ route('users.destroy' , ['user'=>':id']) }}` .replace(':id', id);
-        
+    document.querySelectorAll('.delete').forEach(button => {
+        button.addEventListener('click', function () {
+            let id = this.dataset.id;
+            let name = this.dataset.name;
+            // alert(id);
+            document.querySelector('#modalDelete .name').innerText = name;
+            // document.querySelector('#modalDelete form').action = `/users/${id}`;
+            document.querySelector('#modalDelete form').action = `{{ route('users.destroy', ['user' => '_id']) }}`.replace('_id', id);
+        })
     })
-})
 </script>
-
 @endsection

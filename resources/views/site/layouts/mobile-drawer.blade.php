@@ -1,4 +1,5 @@
- <div class="drawer" id="drawer" aria-hidden="true">
+<!-- Mobile drawer -->
+  <div class="drawer" id="drawer" aria-hidden="true">
     <div class="drawer-head">
       <a href="index.html" class="brand"><span class="brand-mark">S</span> Sprylo</a>
       <button class="drawer-close" aria-label="Close menu">Close ✕</button>
