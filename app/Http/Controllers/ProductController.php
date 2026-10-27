@@ -15,39 +15,27 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // $products = Product::from('products p')
-        //                     ->join('categories c', 'c.id', '=', 'p.category_id')
-        //                     ->join('brands c', 'c.id', '=', 'p.brand_id')
-        //                     ->select('p.*', 'c.name as category', 'b.name as brand')
-        //                     ->get();
+        $query = Product::from('products as p')
+            ->join('categories as c', 'c.id', '=', 'p.category_id')
+            ->join('brands as b', 'b.id', '=', 'p.brand_id')
+            ->select('p.*', 'c.name as category', 'b.name as brand');
 
-        // if($request->search && $request->category_id && $request->brand_id) {
-        //     dd($request->search . " " . $request->category_id . " " . $request->brand_id);
-        // }
-
-        $query = Product::query();
-        if($request->search) {
-            // $query->where('name', 'like', "%{$request->search}%");
-            $query->where('name', 'like', "%".$request->search."%");
+        if ($request->search) {
+            $query->where('p.name', 'like', '%' . $request->search . '%');
         }
-        if($request->category_id) {
-            $query->where('category_id', $request->category_id);
+        if ($request->category_id) {
+            $query->where('p.category_id', $request->category_id);
         }
-        if($request->brand_id) {
-            $query->where('brand_id', $request->brand_id);
+        if ($request->brand_id) {
+            $query->where('p.brand_id', $request->brand_id);
         }
-        $products = $query->with('category', 'brand')
-                    ->orderby('id', 'desc')
-                    ->paginate();
 
+        $products = $query->orderBy('p.id', 'desc')->paginate(15);
 
-        $categories = Category::orderBy('name', 'asc')->get();
-        $brands = Brand::orderBy('name', 'asc')->get();
-        // $products = Product::with('category', 'brand')
-        //     ->orderby('id', 'desc')
-        //     ->paginate();
-        // dd($products->first()->category->name);
-        return view('admin.pages.product.index', compact('products', 'categories', 'brands'));
+        return response()->json([
+            'success'   => true,
+            'products'  => $products
+        ]);
     }
 
     /**
@@ -68,97 +56,183 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        if($request->hasFile('image')){
+            return response()->json('iamge found');
+        }else{
+            return response()->json('iamge not  found');
+        }
         $request->validate(
             [
-                // For multiple image
-                //    'image'  => 'required|array', 
-                //    'image*' => 'images|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-
-                'name' => 'required|min:3',
+                'name'          => 'required|min:3|max:255',
+                'price'         => 'required|numeric|min:0',
+                'quantity'      => 'required|integer|min:0',
+                'reorder_level' => 'required|integer|min:0',
+                'description'   => 'required|string',
+                'category_id'   => 'required|exists:categories,id',
+                'brand_id'      => 'required|exists:brands,id',
                 // For single image
-                'image' => 'image|mimes:jpeg,png,jpg|max:500',
+                'image'         => 'nullable|image|mimes:jpeg,png,jpg|max:500',
             ],
             [
                 'name.min' => 'Please enter at least 3 characters',
                 'image.max' => 'Sorry! Image size is too large. Maximum size is 500kb.',
-            ] 
+            ]
         );
-        // dd($request->active);
-        if($request->hasFile('image')) {
-            // dd("Image Found");
-            // $imgName = time() . '.' . $request->image->extension();
-            // $imgName = time() . '.' . $request->image->getClientOriginalExtension();
-            // // dd($request->image->getClientOriginalExtension());
-            // $request->image->move(public_path('uploads'), $imgName);
 
-            $imgName = UploadImgService::upload($request->image, 'uploads/products');
 
-            Product::create([
-                'name'          => $request->name,
-                'price'         => $request->price,
-                'quantity'      => $request->qty,
-                'reorder_level' => $request->reorder,
-                'description'   => $request->desc,
-                'category_id'   => $request->category_id,
-                'brand_id'      => $request->brand_id,
-                'active'        => $request->active ? 1 : 0,
-                // 'image'         => "uploads/" . $imgName,
-                'image'         => $imgName,
-            ]);
-            return redirect()->route('products.index')->with('success', 'Product created successfully.');
-        }else{
-            // dd("No Image");
-            // Product::create($request->all());
-            Product::create([
-                'name'          => $request->name,
-                'price'         => $request->price,
-                'quantity'      => $request->qty,
-                'reorder_level' => $request->reorder,
-                'description'   => $request->desc,
-                'category_id'   => $request->category_id,
-                'brand_id'      => $request->brand_id,
-                'active'        => $request->active ? 1 : 0,
-            ]);
-            return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        $image = null;
+        if ($request->hasFile('image')) {
+            $image = UploadImgService::upload($request->image, 'uploads/products');
         }
 
+        $product = Product::create([
+            'name'          => $request->name,
+            'price'         => $request->price,
+            'quantity'      => $request->quantity,
+            'reorder_level' => $request->reorder_level,
+            'description'   => $request->description,
+            'category_id'   => $request->category_id,
+            'brand_id'      => $request->brand_id,
+            'active'        => $request->has('active') ? ($request->boolean('active') ? 1 : 0) : 1,
+            'image'         => $image,
+        ]);
+
+        if ($product) {
+            return response()->json([
+                'success' => 'Product created successfully',
+                'product' => $product
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Product not created. Try again later.'
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(string $id)
     {
-        //
+        $product = Product::from('products as p')
+            ->join('categories as c', 'c.id', '=', 'p.category_id')
+            ->join('brands as b', 'b.id', '=', 'p.brand_id')
+            ->where('p.id', $id)
+            ->select('p.*', 'c.name as category', 'b.name as brand')
+            ->first();
+
+        if ($product) {
+            return response()->json([
+                'success' => true,
+                'product' => $product
+            ]);
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => 'Product not found'
+            ], 404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(string $id)
     {
-        //
+        $categories = Category::orderBy('name', 'asc')->get();
+        $brands = Brand::orderBy('name', 'asc')->get();
+        $product = Product::find($id);
+
+        return view('admin.pages.product.edit', [
+            'product'       => $product,
+            'categories'    => $categories,
+            'brands'        => $brands
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, string $id)
     {
-        //
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Product not found'
+            ], 404);
+        }
+
+        $request->validate(
+            [
+                'name'          => 'required|min:3|max:255',
+                'price'         => 'required|numeric|min:0',
+                'quantity'      => 'required|integer|min:0',
+                'reorder_level' => 'required|integer|min:0',
+                'description'   => 'required|string',
+                'category_id'   => 'required|exists:categories,id',
+                'brand_id'      => 'required|exists:brands,id',
+                'image'         => 'nullable|image|mimes:jpeg,png,jpg|max:500',
+            ],
+            [
+                'name.min' => 'Please enter at least 3 characters',
+                'image.max' => 'Sorry! Image size is too large. Maximum size is 500kb.',
+            ]
+        );
+
+        if ($request->hasFile('image')) {
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
+            }
+            $product->image = UploadImgService::upload($request->image, 'uploads/products');
+        }
+
+        $product->name          = $request->name;
+        $product->price         = $request->price;
+        $product->quantity      = $request->quantity;
+        $product->reorder_level = $request->reorder_level;
+        $product->description   = $request->description;
+        $product->category_id   = $request->category_id;
+        $product->brand_id      = $request->brand_id;
+        $product->active        = $request->has('active') ? ($request->boolean('active') ? 1 : 0) : 0;
+
+        if ($product->save()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product updated successfully!',
+                'product' => $product
+            ]);
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => 'Something went wrong. Product not updated'
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(string $id)
     {
-        // dd($product);
-        if($product->image) {
-            unlink(public_path($product->image));
+        $product = Product::find($id);
+
+        if ($product) {
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
+            }
+            $product->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully'
+            ]);
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => 'Product not found'
+            ], 404);
         }
-        Product::destroy($product->id);
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }
