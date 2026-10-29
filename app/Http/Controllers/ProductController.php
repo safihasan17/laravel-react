@@ -56,17 +56,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->hasFile('image')){
-            return response()->json('iamge found');
-        }else{
-            return response()->json('iamge not  found');
-        }
+        // if($request->hasFile('image')){
+        //     return response()->json('iamge found');
+        // }else{
+        //     return response()->json('iamge not  found');
+        // }
         $request->validate(
             [
                 'name'          => 'required|min:3|max:255',
                 'price'         => 'required|numeric|min:0',
                 'quantity'      => 'required|integer|min:0',
-                'reorder_level' => 'required|integer|min:0',
+                'reorder_level' => 'integer|min:0',
                 'description'   => 'required|string',
                 'category_id'   => 'required|exists:categories,id',
                 'brand_id'      => 'required|exists:brands,id',
